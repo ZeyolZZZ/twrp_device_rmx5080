@@ -47,8 +47,19 @@ jobs:
       - name: 构建 recovery
         run: |
           cd ~/tw
+          echo "===== 诊断 ====="
+          echo "-- vendor/twrp 是否存在 --"
+          ls -d vendor/twrp vendor/twrp/config 2>/dev/null || echo "  vendor/twrp 缺失"
+          ls vendor/twrp/config/common.mk 2>/dev/null || echo "  common.mk 缺失"
+          echo "-- 设备树 --"
+          ls device/realme/RE6025L1/
+          echo "-- AndroidProducts.mk --"
+          cat device/realme/RE6025L1/AndroidProducts.mk
+          echo "===== 尝试 lunch ====="
           source build/envsetup.sh
-          lunch twrp_RE6025L1-eng
+          print_lunch_menu 2>/dev/null | grep -i twrp | head -10 || echo "  菜单里没有 twrp 条目"
+          lunch twrp_RE6025L1-eng || lunch twrp_RE6025L1-userdebug || {
+            echo "::error::lunch 失败，两种组合都不认"; exit 1; }
           mka recoveryimage 2>&1 | tail -40
           ls -l out/target/product/RE6025L1/*.img 2>/dev/null
 
