@@ -1,0 +1,55 @@
+name: build-twrt
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 720
+    steps:
+      - name: 释放磁盘空间
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /opt/hostedtoolcache/CodeQL /usr/local/share/boost \
+                      "$AGENT_TOOLSDIRECTORY" /usr/local/lib/node_modules
+          df -h /
+
+      - name: 安装依赖
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq git curl python3 rsync bc zip openjdk-17-jdk-headless
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: 同步 TWRP manifest
+        run: |
+          mkdir -p ~/tw && cd ~/tw
+          repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git \
+                    -b twrp-14.1 --depth=1
+          repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags 2>&1 | tail -20
+          df -h /
+
+      - name: 放入最小设备树
+        run: |
+          cd ~/tw
+          mkdir -p device/realme
+          cp -r "$GITHUB_WORKSPACE/device/realme/RE6025L1" device/realme/
+          ls -la device/realme/RE6025L1/
+
+      - name: 构建 recovery
+        run: |
+          cd ~/tw
+          source build/envsetup.sh
+          lunch twrp_RE6025L1-eng
+          mka recoveryimage 2>&1 | tail -40
+          ls -l out/target/product/RE6025L1/*.img 2>/dev/null
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: twrp-images
+          path: |
+            ~/tw/out/target/product/RE6025L1/recovery.img
+            ~/tw/out/target/product/RE6025L1/ramdisk-recovery.img
+          if-no-files-found: warn

@@ -1,0 +1,8 @@
+# fstab for RE6025L1 (RMX5080), erofs dynamic partitions + f2fs data
+/system        /dev/block/mapper/system      ext4  ro,barrier=1        wait,slotselect,first_stage_mount
+/system_ext    /dev/block/mapper/system_ext  ext4  ro,barrier=1        wait,slotselect,first_stage_mount
+/product       /dev/block/mapper/product     ext4  ro,barrier=1        wait,slotselect,first_stage_mount
+/vendor        /dev/block/mapper/vendor      ext4  ro,barrier=1        wait,slotselect,first_stage_mount
+/odm           /dev/block/mapper/odm         ext4  ro,barrier=1        wait,slotselect,first_stage_mount
+/metadata      /dev/block/by-name/metadata   ext4  noatime,nosuid,nodev wait,check,formattable
+/data          /dev/block/by-name/userdata   f2fs  noatime,nosuid,nodev wait,check,formattable,encryptable=ice
