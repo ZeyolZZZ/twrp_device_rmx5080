@@ -19,6 +19,10 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq git curl python3 rsync bc zip openjdk-17-jdk-headless
+          mkdir -p ~/bin
+          curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod 755 ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
           git config --global user.name "$GITHUB_ACTOR"
           git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
