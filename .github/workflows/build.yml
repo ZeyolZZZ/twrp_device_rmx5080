@@ -58,8 +58,24 @@ jobs:
           echo "===== 尝试 lunch ====="
           source build/envsetup.sh
           print_lunch_menu 2>/dev/null | grep -i twrp | head -10 || echo "  菜单里没有 twrp 条目"
-          lunch twrp_RE6025L1-eng || lunch twrp_RE6025L1-userdebug || {
-            echo "::error::lunch 失败，两种组合都不认"; exit 1; }
+          set +e
+          echo "===== lunch 完整输出 ====="
+          lunch twrp_RE6025L1-eng 2>&1 | head -80
+          RC=$?
+          echo "lunch rc=$RC"
+          echo "===== 若失败，直接解析产品 .mk 看错在哪 ====="
+          if [ "$RC" -ne 0 ]; then
+            echo "-- 逐个 inherit 目标是否存在 --"
+            for f in               "$(gettop)/build/make/target/product/base.mk"               "$(gettop)/device/realme/RE6025L1/device.mk"               "$(gettop)/vendor/twrp/config/common.mk"; do
+              [ -f "$f" ] && echo "  ✓ $f" || echo "  ✗ 缺失 $f"
+            done
+            echo "-- TARGET_PRODUCT 相关 --"
+            build/soong/soong_ui.bash --dumpvar-mode TARGET_PRODUCT 2>&1 | head -10
+            echo "-- print_lunch_menu 全部 --"
+            print_lunch_menu 2>&1 | head -30
+            echo "::error::lunch 失败，上面是完整诊断"
+            exit 1
+          fi
           mka recoveryimage 2>&1 | tail -40
           ls -l out/target/product/RE6025L1/*.img 2>/dev/null
 
