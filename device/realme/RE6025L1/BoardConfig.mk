@@ -30,6 +30,7 @@ BOARD_INCLUDE_RECOVERY_DTBO := true
 # ---- 预编译内核（不自己编）----
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
 BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilt/dtb
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 
 # ---- TWRP ----
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
