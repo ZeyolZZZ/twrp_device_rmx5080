@@ -124,11 +124,16 @@ jobs:
             exit 1
           fi
 
+      - name: 收集产物到工作区
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp -v ~/tw/out/target/product/RE6025L1/vendor_boot*.img "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
+          cp -v ~/tw/out/target/product/RE6025L1/*ramdisk* "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
+          ls -lh "$GITHUB_WORKSPACE/out/"
+
       - name: 上传产物
         uses: actions/upload-artifact@v4
         with:
           name: twrp-images
-          path: |
-            ~/tw/out/target/product/RE6025L1/recovery.img
-            ~/tw/out/target/product/RE6025L1/ramdisk-recovery.img
-          if-no-files-found: warn
+          path: out/
+          if-no-files-found: error
