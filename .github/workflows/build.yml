@@ -20,26 +20,17 @@ jobs:
 
       - name: 安装依赖
         run: |
-          set -x
-          # runner 的 azure 镜像偶尔解析不了，换官方源并重试
-          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g; s|security.ubuntu.com|security.ubuntu.com|g' /etc/apt/sources.list || true
-          sudo sed -i 's|mirror+file:/etc/apt/apt-mirrors.txt|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list || true
-          ok=0
+          # runner 已预装 git / curl / python3 / zip / Java，只补 TWRP 构建缺的两个
           for i in 1 2 3 4 5; do
-            if sudo apt-get update -qq && \
-               sudo apt-get install -y -qq --fix-missing git curl python3 rsync bc zip openjdk-17-jdk-headless; then
-              ok=1; break
+            if sudo apt-get update -qq && sudo apt-get install -y -qq --fix-missing rsync bc; then
+              echo "依赖就绪"; break
             fi
-            echo "::warning::apt 第 $i 次失败，10 秒后重试"
-            sleep 10
+            echo "::warning::apt 第 $i 次失败，10 秒后重试"; sleep 10
+            [ "$i" = "5" ] && { echo "::error::依赖安装失败"; exit 1; }
           done
-          [ "$ok" = "1" ] || { echo "::error::依赖安装失败（5 次重试后）"; exit 1; }
-          mkdir -p ~/bin
-          curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-          chmod 755 ~/bin/repo
-          echo "$HOME/bin" >> $GITHUB_PATH
-          git config --global user.name "$GITHUB_ACTOR"
-          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          java -version 2>&1 | head -1
+          git --version
+          python3 --version
 
       - name: 同步 TWRP manifest
         run: |
