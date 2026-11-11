@@ -28,6 +28,12 @@ jobs:
             echo "::warning::apt 第 $i 次失败，10 秒后重试"; sleep 10
             [ "$i" = "5" ] && { echo "::error::依赖安装失败"; exit 1; }
           done
+          # repo 工具（manifest 同步必需）
+          mkdir -p ~/bin
+          curl -s -o ~/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
+          chmod 755 ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
+          ~/bin/repo --version | head -1
           java -version 2>&1 | head -1
           git --version
           python3 --version
