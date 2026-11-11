@@ -44,6 +44,17 @@ jobs:
           cp -r "$GITHUB_WORKSPACE/device/realme/RE6025L1" device/realme/
           ls -la device/realme/RE6025L1/
 
+      - name: 移除 TWRP 用不到且缺依赖的树
+        run: |
+          cd ~/tw
+          # 这些是测试框架 / 模拟器 / AVF 的代码，TWRP 不需要，
+          # 但最小 manifest 没同步它们的 defaults 模块，Soong 会报 undefined module。
+          for d in tools/tradefederation hardware/google/aemu hardware/google/gfxstream \
+                   system/secretkeeper packages/modules/AVF; do
+            [ -d "$d" ] && { echo "  移除 $d"; rm -rf "$d"; }
+          done
+          df -h / | tail -1
+
       - name: 构建 recovery
         run: |
           cd ~/tw
