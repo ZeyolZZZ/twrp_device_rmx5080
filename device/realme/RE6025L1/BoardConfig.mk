@@ -1,8 +1,5 @@
 DEVICE_PATH := device/realme/RE6025L1
 
-# AOSP 14+ 要求显式 release config（否则 lunch 报 "No release config set"）
-TARGET_RELEASE := ap2a
-
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
