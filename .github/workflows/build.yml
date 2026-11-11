@@ -63,6 +63,12 @@ jobs:
           lunch twrp_RE6025L1-ap2a-userdebug 2>&1 | head -80
           RC=$?
           echo "lunch rc=$RC"
+          echo "-- lunch 后的变量 --"
+          echo "TARGET_PRODUCT=[$(get_build_var TARGET_PRODUCT 2>/dev/null)]"
+          echo "TARGET_RELEASE=[$(get_build_var TARGET_RELEASE 2>/dev/null)]"
+          echo "TARGET_BUILD_VARIANT=[$(get_build_var TARGET_BUILD_VARIANT 2>/dev/null)]"
+          echo "-- TARGET_RELEASE 是否 readonly --"
+          echo "RELEASE_CONFIG_MAP=[$(get_build_var RELEASE_CONFIG_MAP 2>/dev/null)]"
           echo "===== 若失败，直接解析产品 .mk 看错在哪 ====="
           if [ "$RC" -ne 0 ]; then
             echo "-- 逐个 inherit 目标是否存在 --"
