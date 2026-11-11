@@ -20,8 +20,20 @@ jobs:
 
       - name: 安装依赖
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq git curl python3 rsync bc zip openjdk-17-jdk-headless
+          set -x
+          # runner 的 azure 镜像偶尔解析不了，换官方源并重试
+          sudo sed -i 's|azure.archive.ubuntu.com|archive.ubuntu.com|g; s|security.ubuntu.com|security.ubuntu.com|g' /etc/apt/sources.list || true
+          sudo sed -i 's|mirror+file:/etc/apt/apt-mirrors.txt|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list || true
+          ok=0
+          for i in 1 2 3 4 5; do
+            if sudo apt-get update -qq && \
+               sudo apt-get install -y -qq --fix-missing git curl python3 rsync bc zip openjdk-17-jdk-headless; then
+              ok=1; break
+            fi
+            echo "::warning::apt 第 $i 次失败，10 秒后重试"
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { echo "::error::依赖安装失败（5 次重试后）"; exit 1; }
           mkdir -p ~/bin
           curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod 755 ~/bin/repo
