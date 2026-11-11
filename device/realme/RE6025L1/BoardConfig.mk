@@ -14,6 +14,15 @@ TARGET_BOOTLOADER_BOARD_NAME := mt6899
 
 # ---- 分区结构（只影响运行时的识别，不参与镜像构建）----
 AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS += \
+    boot \
+    init_boot \
+    system \
+    system_ext \
+    product \
+    vendor \
+    odm \
+    vendor_boot
 BOARD_USES_METADATA_PARTITION := true
 BOARD_USES_RECOVERY_AS_BOOT := false
 BOARD_INCLUDE_RECOVERY_DTBO := true
