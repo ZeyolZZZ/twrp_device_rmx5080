@@ -1,7 +1,12 @@
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
-$(call inherit-product, device/realme/RE6025L1/device.mk)
-$(call inherit-product, vendor/twrp/config/common.mk)
+# Release name
+PRODUCT_RELEASE_NAME := RE6025L1
 
+DEVICE_PATH := device/realme/$(PRODUCT_RELEASE_NAME)
+
+# Inherit from hardware-specific part of the product configuration
+$(call inherit-product, $(DEVICE_PATH)/device.mk)
+
+## Device identifier. This must come after all inclusions
 PRODUCT_NAME := twrp_RE6025L1
 PRODUCT_DEVICE := RE6025L1
 PRODUCT_BRAND := realme
