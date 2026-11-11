@@ -109,7 +109,7 @@ jobs:
           # 最小 manifest 没同步全部仓库，Soong 会报一堆 undefined module；
           # 让 Soong 跳过缺失依赖（TWRP 官方构建的常规做法）
           export ALLOW_MISSING_DEPENDENCIES=true
-export SOONG_ALLOW_MISSING_DEPENDENCIES=true
+          export SOONG_ALLOW_MISSING_DEPENDENCIES=true
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           mka vendorbootimage 2>&1 | tail -40
