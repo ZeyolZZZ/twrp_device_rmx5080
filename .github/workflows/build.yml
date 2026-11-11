@@ -60,7 +60,7 @@ jobs:
           print_lunch_menu 2>/dev/null | grep -i twrp | head -10 || echo "  菜单里没有 twrp 条目"
           set +e
           echo "===== lunch 完整输出 ====="
-          lunch twrp_RE6025L1-eng 2>&1 | head -80
+          lunch twrp_RE6025L1-ap2a-userdebug 2>&1 | head -80
           RC=$?
           echo "lunch rc=$RC"
           echo "===== 若失败，直接解析产品 .mk 看错在哪 ====="
