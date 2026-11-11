@@ -85,6 +85,9 @@ jobs:
             echo "::error::lunch 失败，上面是完整诊断"
             exit 1
           fi
+          # AOSP 14+ 需要 TARGET_RELEASE；lunch 没带上，这里显式传
+          export TARGET_RELEASE=ap2a
+          echo "TARGET_RELEASE=$TARGET_RELEASE"
           mka recoveryimage 2>&1 | tail -40
           ls -l out/target/product/RE6025L1/*.img 2>/dev/null
 
