@@ -112,7 +112,15 @@ jobs:
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           mka recoveryimage 2>&1 | tail -40
-          ls -l out/target/product/RE6025L1/*.img 2>/dev/null
+          echo "=== 产物清单 ==="
+          find out/target/product/RE6025L1 -maxdepth 2 \( -name '*.img' -o -name 'ramdisk*' \) -exec ls -lh {} \; 2>/dev/null | head -20
+          if [ -f out/target/product/RE6025L1/recovery.img ]; then
+            echo "✅ recovery.img 已生成"
+          else
+            echo "::error::构建报告成功但没有 recovery.img，列出 out 目录："
+            ls -lh out/target/product/RE6025L1/ 2>/dev/null | head -30
+            exit 1
+          fi
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
