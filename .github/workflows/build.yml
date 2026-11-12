@@ -112,7 +112,14 @@ jobs:
           export SOONG_ALLOW_MISSING_DEPENDENCIES=true
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
-          mka ramdisk-recovery vendorbootimage 2>&1 | tail -40
+          # 先列出真实的 ramdisk 类目标名，别再猜
+          echo "===== 含 ramdisk/recovery 的 ninja 目标 ====="
+          m nothing >/dev/null 2>&1 || true
+          ninja -f out/combined-$(get_build_var TARGET_PRODUCT).ninja -t targets all 2>/dev/null \
+            | grep -iE "ramdisk|recovery" | head -30 \\
+            || echo "  无法列出目标"
+          echo "===== 开始构建 ====="
+          mka vendorbootimage 2>&1 | tail -40
           echo "=== 产物清单 ==="
           find out/target/product/RE6025L1 -maxdepth 2 \( -name '*.img' -o -name 'ramdisk*' \) -exec ls -lh {} \; 2>/dev/null | head -20
           IMG=$(find out/target/product/RE6025L1 -maxdepth 1 -name 'vendor_boot*.img' | head -1)
