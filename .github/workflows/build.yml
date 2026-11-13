@@ -58,8 +58,12 @@ jobs:
           cd ~/tw
           # 这些是测试框架 / 模拟器 / AVF 的代码，TWRP 不需要，
           # 但最小 manifest 没同步它们的 defaults 模块，Soong 会报 undefined module。
+          # 这些都是测试 / 与 recovery 无关的代码，最小 manifest 没同步它们的
+          # defaults 模块，留着会让 Soong 报 undefined module。
           for d in tools/tradefederation hardware/google/aemu hardware/google/gfxstream \
-                   system/secretkeeper packages/modules/AVF; do
+                   system/secretkeeper packages/modules/AVF \
+                   test tools/loganalysis packages/modules/AdServices \
+                   packages/modules/Connectivity cts \; do
             [ -d "$d" ] && { echo "  移除 $d"; rm -rf "$d"; }
           done
           df -h / | tail -1
