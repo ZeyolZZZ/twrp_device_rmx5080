@@ -130,6 +130,12 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/out"
           cp -v ~/tw/out/target/product/RE6025L1/vendor_boot*.img "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
           cp -v ~/tw/out/target/product/RE6025L1/*ramdisk* "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
+          echo "=== out 目录里所有 ramdisk 相关文件 ==="
+          find ~/tw/out -name '*ramdisk*' -o -name '*recovery*' 2>/dev/null | head -20
+          echo "=== 把这些都拷过来（如果有）==="
+          find ~/tw/out -name '*ramdisk*' -type f -size +100k 2>/dev/null | while read f; do
+            cp -v "$f" "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
+          done
           ls -lh "$GITHUB_WORKSPACE/out/"
 
       - name: 上传产物
