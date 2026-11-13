@@ -113,7 +113,7 @@ jobs:
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           # 先列出真实的 ramdisk 类目标名，别再猜
-          mka recoveryimage 2>&1 | tail -40
+          mka recovery 2>&1 | tail -40
           echo "=== 产物清单 ==="
           find out/target/product/RE6025L1 -maxdepth 2 \( -name '*.img' -o -name 'ramdisk*' \) -exec ls -lh {} \; 2>/dev/null | head -20
           IMG=$(find out/target/product/RE6025L1 -maxdepth 1 -name 'vendor_boot*.img' | head -1)
