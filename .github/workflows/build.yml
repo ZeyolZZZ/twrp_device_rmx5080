@@ -136,6 +136,18 @@ jobs:
           find ~/tw/out -name '*ramdisk*' -type f -size +100k 2>/dev/null | while read f; do
             cp -v "$f" "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
           done
+          # 把 TWRP 的 recovery/root 打包成恢复 ramdisk（这就是要替换进 vendor_boot 的东西）
+          RR=~/tw/out/target/product/RE6025L1/recovery/root
+          if [ -d "$RR" ]; then
+            echo "=== 打包 recovery/root → cpio ==="
+            ( cd "$RR" && find . -print0 | cpio --null -o -H newc 2>/dev/null | gzip -9 ) \
+              > "$GITHUB_WORKSPACE/out/ramdisk-recovery-twrp.cpio.gz"
+            ls -lh "$GITHUB_WORKSPACE/out/ramdisk-recovery-twrp.cpio.gz"
+            echo "  内容条目数: $( ( cd "$RR" && find . | wc -l ) )"
+          else
+            echo "::warning::recovery/root 不存在，列出 out 结构"
+            find ~/tw/out/target/product/RE6025L1 -maxdepth 2 -type d | head -20
+          fi
           ls -lh "$GITHUB_WORKSPACE/out/"
 
       - name: 上传产物
