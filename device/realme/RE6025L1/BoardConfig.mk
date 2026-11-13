@@ -63,3 +63,6 @@ BOARD_VENDOR_RAMDISK_FRAGMENTS := recovery
 BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.KERNEL_MODULE_LOAD := false
 BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.mkbootimg_args := --type recovery
 BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.BOARD_VENDOR_RAMDISK_FRAGMENT_SIZE := 0
+
+# TWRP 自己的板级配置（BoardConfigKernel.mk + BoardConfigSoong.mk）
+include vendor/twrp/config/BoardConfigTWRP.mk
