@@ -113,7 +113,7 @@ jobs:
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           # 先列出真实的 ramdisk 类目标名，别再猜
-          mka vendorbootimage 2>&1 | tail -40
+          mka recoveryimage 2>&1 | tail -40
           echo "=== 产物清单 ==="
           find out/target/product/RE6025L1 -maxdepth 2 \( -name '*.img' -o -name 'ramdisk*' \) -exec ls -lh {} \; 2>/dev/null | head -20
           IMG=$(find out/target/product/RE6025L1 -maxdepth 1 -name 'vendor_boot*.img' | head -1)
@@ -136,7 +136,25 @@ jobs:
           find ~/tw/out -name '*ramdisk*' -type f -size +100k 2>/dev/null | while read f; do
             cp -v "$f" "$GITHUB_WORKSPACE/out/" 2>/dev/null || true
           done
-          # 把 TWRP 的 recovery/root 打包成恢复 ramdisk（这就是要替换进 vendor_boot 的东西）
+          # 从 recovery.img 里抽出 ramdisk（这才是完整的 TWRP 根目录）
+          RIMG=~/tw/out/target/product/RE6025L1/recovery.img
+          if [ -f "$RIMG" ]; then
+            echo "=== recovery.img 存在 $(stat -c %s "$RIMG") 字节，抽出 ramdisk ==="
+            MB=$(ls ~/tw/external/magisk-prebuilt/*/magiskboot 2>/dev/null | head -1)
+            [ -z "$MB" ] && MB=$(find ~/tw/out -name magiskboot -type f 2>/dev/null | head -1)
+            if [ -n "$MB" ]; then
+              mkdir -p /tmp/rx && cd /tmp/rx && cp "$RIMG" . && "$MB" unpack recovery.img >/dev/null 2>&1
+              ls -lh /tmp/rx
+              [ -f /tmp/rx/ramdisk.cpio ] && cp /tmp/rx/ramdisk.cpio "$GITHUB_WORKSPACE/out/ramdisk-twrp.cpio" && \
+                echo "  ✅ ramdisk-twrp.cpio $(stat -c %s "$GITHUB_WORKSPACE/out/ramdisk-twrp.cpio") 字节"
+            else
+              echo "::warning::找不到 magiskboot"
+            fi
+          else
+            echo "::warning::没有 recovery.img"
+            ls -lh ~/tw/out/target/product/RE6025L1/*.img 2>/dev/null
+          fi
+          # 兜底：仍然打包 recovery/root
           RR=~/tw/out/target/product/RE6025L1/recovery/root
           if [ -d "$RR" ]; then
             echo "=== 打包 recovery/root → cpio ==="
