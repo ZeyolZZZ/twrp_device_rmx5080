@@ -108,8 +108,6 @@ jobs:
           # AOSP 14+ 需要 TARGET_RELEASE；lunch 没带上，这里显式传
           # 最小 manifest 没同步全部仓库，Soong 会报一堆 undefined module；
           # 让 Soong 跳过缺失依赖（TWRP 官方构建的常规做法）
-          export ALLOW_MISSING_DEPENDENCIES=true
-          export SOONG_ALLOW_MISSING_DEPENDENCIES=true
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           # 先列出真实的 ramdisk 类目标名，别再猜
