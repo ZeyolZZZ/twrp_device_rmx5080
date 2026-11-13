@@ -60,9 +60,8 @@ BOARD_MKBOOTIMG_INIT_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 # ---- vendor_boot 的 recovery 片段（不加这几行，产出的 vendor_boot 只有 12KB 空壳）----
 BOARD_USES_RECOVERY_AS_BOOT := false
 BOARD_VENDOR_RAMDISK_FRAGMENTS := recovery
-BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.KERNEL_MODULE_LOAD := false
-BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.mkbootimg_args := --type recovery
-BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.BOARD_VENDOR_RAMDISK_FRAGMENT_SIZE := 0
+BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.PREBUILT := $(DEVICE_PATH)/prebuilt/ramdisk-recovery.cpio
+BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.MKBOOTIMG_ARGS := --ramdisk_type RECOVERY
 
 # TWRP 自己的板级配置（BoardConfigKernel.mk + BoardConfigSoong.mk）
 include vendor/twrp/config/BoardConfigTWRP.mk
