@@ -63,7 +63,7 @@ jobs:
           for d in tools/tradefederation hardware/google/aemu hardware/google/gfxstream \
                    system/secretkeeper packages/modules/AVF \
                    test tools/loganalysis packages/modules/AdServices \
-                   packages/modules/Connectivity cts; do
+                   packages/modules/Connectivity; do
             [ -d "$d" ] && { echo "  移除 $d"; rm -rf "$d"; }
           done
           df -h / | tail -1
@@ -112,6 +112,8 @@ jobs:
           # AOSP 14+ 需要 TARGET_RELEASE；lunch 没带上，这里显式传
           # 最小 manifest 没同步全部仓库，Soong 会报一堆 undefined module；
           # 让 Soong 跳过缺失依赖（TWRP 官方构建的常规做法）
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export SOONG_ALLOW_MISSING_DEPENDENCIES=true
           export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           # 先列出真实的 ramdisk 类目标名，别再猜
@@ -120,6 +122,11 @@ jobs:
           ls ~/tw/system/security/apc/ 2>/dev/null | head -8
           find ~/tw/system/security -name "Android.bp" 2>/dev/null | head -5
           grep -rn "android.security.apc" ~/tw/system/security/*/Android.bp 2>/dev/null | head -5
+          echo "===== 开始构建 ====="
+          echo "===== libtar 相关排查 ====="
+          ls -d ~/tw/external/libtar 2>/dev/null && echo "  ✓ external/libtar 存在" || echo "  ✗ external/libtar 不存在"
+          grep -rn "libtar" ~/tw/vendor/twrp/ 2>/dev/null | head -5
+          grep -rn "android.security.apc" ~/tw/external/libtar/ 2>/dev/null | head -5
           echo "===== 开始构建 ====="
           mka recovery 2>&1 | tail -40
           echo "=== 产物清单 ==="
