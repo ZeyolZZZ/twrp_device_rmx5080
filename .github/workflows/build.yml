@@ -63,7 +63,9 @@ jobs:
           for d in tools/tradefederation hardware/google/aemu hardware/google/gfxstream \
                    system/secretkeeper packages/modules/AVF \
                    test tools/loganalysis packages/modules/AdServices \
-                   packages/modules/Connectivity; do
+                   packages/modules/Connectivity \
+                   art/test \
+                   frameworks/base/libs/WindowManager/Shell/tests; do
             [ -d "$d" ] && { echo "  移除 $d"; rm -rf "$d"; }
           done
           df -h / | tail -1
