@@ -65,4 +65,9 @@ BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.PREBUILT := $(DEVICE_PATH)/prebuilt/ramdi
 BOARD_VENDOR_RAMDISK_FRAGMENT.recovery.MKBOOTIMG_ARGS := --ramdisk_type RECOVERY
 
 # TWRP 自己的板级配置（BoardConfigKernel.mk + BoardConfigSoong.mk）
+
+# ---- recovery 内容的来源（照参考设备写法）----
+TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+
 include vendor/twrp/config/BoardConfigTWRP.mk
