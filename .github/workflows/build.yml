@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p ~/tw && cd ~/tw
           repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git \
-                    -b twrp-14.1 --depth=1
+                    -b twrp-12.1 --depth=1
           repo sync -c -j$(nproc) --force-sync --no-clone-bundle --no-tags 2>&1 | tail -20
           df -h /
 
@@ -64,7 +64,6 @@ jobs:
                    system/secretkeeper packages/modules/AVF \
                    test tools/loganalysis packages/modules/AdServices \
                    packages/modules/Connectivity \
-                   art/test \
                    frameworks/base/libs/WindowManager/Shell/tests; do
             [ -d "$d" ] && { echo "  移除 $d"; rm -rf "$d"; }
           done
