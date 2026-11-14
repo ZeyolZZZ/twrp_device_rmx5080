@@ -87,7 +87,7 @@ jobs:
           echo "===== 完整午餐菜单（不过滤）====="
           print_lunch_menu 2>&1 | head -60
           echo "===== lunch 真实退出码 ====="
-          lunch twrp_RE6025L1-ap2a-userdebug > /tmp/lunch.log 2>&1
+          lunch twrp_RE6025L1-eng > /tmp/lunch.log 2>&1
           RC=$?
           echo "lunch rc=$RC"
           tail -30 /tmp/lunch.log
@@ -115,7 +115,6 @@ jobs:
           # 让 Soong 跳过缺失依赖（TWRP 官方构建的常规做法）
           export ALLOW_MISSING_DEPENDENCIES=true
           export SOONG_ALLOW_MISSING_DEPENDENCIES=true
-          export TARGET_RELEASE=ap2a
           echo "TARGET_RELEASE=$TARGET_RELEASE"
           # 先列出真实的 ramdisk 类目标名，别再猜
           echo "===== 检查 system/security（android.security.apc 的来源）====="
